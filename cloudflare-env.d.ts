@@ -6,6 +6,7 @@ declare global {
     ADMIN_API_KEY: { get(): Promise<string | null> };
     APP_ENV: "local" | "dev" | "staging" | "production";
     DATABASE_MODE: "local" | "remote";
+    SECRET_MODE: "local" | "remote";
     RELEASE_SHA: string;
   }
 }

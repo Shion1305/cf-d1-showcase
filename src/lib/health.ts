@@ -23,6 +23,7 @@ export async function getHealth(env: CloudflareEnv): Promise<Health> {
     ok: database.status === "fulfilled" && secret.status === "fulfilled",
     environment: env.APP_ENV,
     databaseMode: env.DATABASE_MODE,
+    secretMode: env.SECRET_MODE,
     release: env.RELEASE_SHA,
     database: database.status === "fulfilled" ? "ready" : "unavailable",
     secret: secret.status === "fulfilled" ? "ready" : "unavailable",

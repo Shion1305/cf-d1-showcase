@@ -28,6 +28,7 @@ test("all cloud environments bind explicitly and preserve runtime compatibility"
   for (const env of ["dev", "staging", "production"]) {
     const result = makeConfig(base, outputs(env), env, sha);
     assert.equal(result.vars.APP_ENV, env);
+    assert.equal(result.vars.SECRET_MODE, "remote");
     assert.equal(result.vars.RELEASE_SHA, sha);
     assert.equal(result.compatibility_date, base.compatibility_date);
     assert.deepEqual(result.compatibility_flags, base.compatibility_flags);
@@ -68,6 +69,7 @@ test("reject placeholders, wrong secret names, unknown targets, and invalid revi
 test("remote development uses only dev D1 and never a deployed secret", () => {
   const result = remoteDevConfig(base, makeConfig(base, outputs("dev"), "dev"));
   assert.equal(result.d1_databases[0].remote, true);
+  assert.equal(result.vars.SECRET_MODE, "local");
   assert.deepEqual(result.secrets_store_secrets, base.secrets_store_secrets);
   for (const env of ["staging", "production"]) {
     assert.throws(

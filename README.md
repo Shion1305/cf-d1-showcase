@@ -4,6 +4,8 @@ A working Next.js application on **Cloudflare Workers**, with **D1**, **Secrets 
 
 The purpose is to make the path from your laptop to production testable. A successful `next dev` session alone does not establish production compatibility.
 
+Live examples: [dev](https://cf-d1-showcase-dev.shion1305.workers.dev), [staging](https://cf-d1-showcase-staging.shion1305.workers.dev), and [production](https://cf-d1-showcase-production.shion1305.workers.dev). These use separate databases and API keys. Reads are public; writes require the relevant operator key.
+
 ## Start locally
 
 Use Node.js 24 LTS and the pnpm version pinned in `package.json`. Terraform 1.14.1 is used by CI; you don't need Terraform or a Cloudflare account for the application locally.

@@ -9,6 +9,7 @@ export type Health = {
   ok: boolean;
   environment: string;
   databaseMode: string;
+  secretMode: string;
   release: string;
   database: "ready" | "unavailable";
   secret: "ready" | "unavailable";

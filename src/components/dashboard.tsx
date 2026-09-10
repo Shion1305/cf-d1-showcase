@@ -206,8 +206,7 @@ export function Dashboard({ initialData }: { initialData: DashboardData }) {
                 placeholder="Enter your write API key"
               />
               <p>
-                {data.health.environment === "local" ||
-                data.health.environment === "dev" ? (
+                {data.health.secretMode === "local" ? (
                   <>
                     Local secret for local execution:{" "}
                     <code>local-showcase-only</code>.{" "}

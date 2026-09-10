@@ -56,6 +56,7 @@ export function makeConfig(base, outputs, target, revision = "manual") {
     vars: {
       APP_ENV: target,
       DATABASE_MODE: "remote",
+      SECRET_MODE: "remote",
       RELEASE_SHA: checked(
         revision,
         /^(?:[a-f0-9]{40}|manual)$/,
@@ -86,6 +87,7 @@ export function remoteDevConfig(base, deployed) {
     throw new Error("Remote development only supports dev.");
   return {
     ...deployed,
+    vars: { ...deployed.vars, SECRET_MODE: "local" },
     d1_databases: deployed.d1_databases.map((binding) => ({
       ...binding,
       remote: true,

@@ -11,6 +11,7 @@
   "vars": {
     "APP_ENV": "local",
     "DATABASE_MODE": "local",
+    "SECRET_MODE": "local",
     "RELEASE_SHA": "local"
   },
   "services": [

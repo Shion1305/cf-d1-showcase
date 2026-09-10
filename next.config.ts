@@ -8,5 +8,5 @@ if (process.env.NODE_ENV === "development") {
   });
 }
 
-const config: NextConfig = { poweredByHeader: false };
+const config: NextConfig = { poweredByHeader: false, agentRules: false };
 export default config;

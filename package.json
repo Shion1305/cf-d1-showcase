@@ -19,7 +19,7 @@
     "config:generate": "node scripts/generate-config.mjs",
     "infra": "node --env-file-if-exists=.env.deploy scripts/infra.mjs",
     "release": "node --env-file-if-exists=.env.deploy scripts/release.mjs",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "next typegen && tsc --noEmit",
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
