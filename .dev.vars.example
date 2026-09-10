@@ -1,0 +1,3 @@
+NEXTJS_ENV=development
+# The API key is a Secrets Store binding, not a plaintext variable here.
+# pnpm setup:local creates an explicitly fake key in the local Secrets Store.

@@ -1,0 +1,13 @@
+pnpm-lock.yaml
+next-env.d.ts
+node_modules/
+.next/
+.open-next/
+.wrangler/
+.wrangler.*.json
+infra/.terraform*/
+infra/outputs*.json
+test-results/
+playwright-report/
+.env*
+.dev.vars*

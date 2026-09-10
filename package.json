@@ -1,0 +1,49 @@
+{
+  "name": "cf-d1-showcase",
+  "version": "1.0.0",
+  "private": true,
+  "packageManager": "pnpm@11.9.0",
+  "description": "Next.js on Cloudflare Workers with D1, Secrets Store, Terraform, and a tested path to production.",
+  "engines": {
+    "node": ">=22.16.0 <27"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "dev:remote": "node scripts/remote-dev.mjs",
+    "build": "next build",
+    "build:worker": "opennextjs-cloudflare build",
+    "preview": "opennextjs-cloudflare preview --port 8787",
+    "setup:local": "node scripts/setup-local.mjs",
+    "db:migrate": "wrangler d1 migrations apply DB --local",
+    "db:seed": "wrangler d1 execute DB --local --file seeds/local.sql",
+    "config:generate": "node scripts/generate-config.mjs",
+    "infra": "node --env-file-if-exists=.env.deploy scripts/infra.mjs",
+    "release": "node --env-file-if-exists=.env.deploy scripts/release.mjs",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test tests/*.test.mjs",
+    "test:e2e": "playwright test",
+    "test:smoke": "node scripts/smoke.mjs",
+    "check": "pnpm lint && pnpm typecheck && pnpm test"
+  },
+  "dependencies": {
+    "@opennextjs/cloudflare": "1.20.6",
+    "next": "16.3.4",
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "5.20260908.1",
+    "@playwright/test": "1.63.0",
+    "@types/node": "22.20.2",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.4",
+    "eslint-config-next": "16.3.4",
+    "prettier": "3.6.2",
+    "typescript": "5.9.3",
+    "wrangler": "4.130.0"
+  }
+}

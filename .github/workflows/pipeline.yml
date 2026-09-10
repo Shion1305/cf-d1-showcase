@@ -1,0 +1,91 @@
+name: Validate and release
+
+on:
+  pull_request:
+  push:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Keep staging verification and production promotion in one serialized lane.
+# Do not cancel a run halfway through a database migration or promotion.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  NEXT_TELEMETRY_DISABLED: "1"
+  WRANGLER_SEND_METRICS: "false"
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check
+      - run: pnpm setup:local
+      - run: pnpm build:worker
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm test:e2e
+      - name: Package the tested build
+        run: |
+          tar -czf worker-build.tar.gz .open-next
+          sha256sum worker-build.tar.gz > worker-build.tar.gz.sha256
+      - uses: actions/upload-artifact@v4
+        with:
+          name: worker-${{ github.sha }}
+          path: |
+            worker-build.tar.gz
+            worker-build.tar.gz.sha256
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-${{ github.run_id }}
+          path: playwright-report/
+          retention-days: 7
+
+  terraform:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.14.1
+      - run: terraform -chdir=infra fmt -check -recursive
+      - run: terraform -chdir=infra init -backend=false -input=false -lockfile=readonly
+      - run: terraform -chdir=infra validate
+      - run: terraform -chdir=infra test
+
+  dev:
+    needs: [verify, terraform]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/develop' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: dev
+    secrets: inherit
+
+  staging:
+    needs: [verify, terraform]
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: staging
+    secrets: inherit
+
+  production:
+    needs: staging
+    uses: ./.github/workflows/deploy.yml
+    with:
+      environment: production
+    secrets: inherit
